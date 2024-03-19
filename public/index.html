@@ -68,23 +68,23 @@
           alert("Por favor, selecciona un archivo.");
         }
       }
-
       function simplifyText(inputText) {
         const regex =
+          /TAKES SCRIPT\s+Ref:\s+[\s\S]*?={50,}\s+Title:\s+Project:\s+[\s\S]+?={50,}/g;
+
+        let simplifiedText = inputText.replace(regex, "");
+
+        const blockRegex =
           /TAKE \d+\s+[\s\S]+?IN: (\d{2}:\d{2}:\d{2}:\d{2})\s+DURATION: (\d{2}:\d{2}:\d{2}:\d{2})\s+[\s\S]+?OUT: (\d{2}:\d{2}:\d{2}:\d{2})\s+[-]+/g;
 
-        let simplifiedBlocks = [];
-        let match;
-        while ((match = regex.exec(inputText)) !== null) {
-          const timeIN = match[1];
-          const timeOUT = match[3];
-          const dialogue = match[0].split("\n").slice(2, -2).join("\n").trim();
-          const simplifiedBlock = `${
-            match[0].split("\n")[0]
-          }\n${timeIN}\n${dialogue}\n${timeOUT}`;
-          simplifiedBlocks.push(simplifiedBlock);
-        }
-        return simplifiedBlocks.join("\n\n");
+        simplifiedText = simplifiedText.replace(blockRegex, (match) => {
+          const timeIN = match.match(/IN: (\d{2}:\d{2}:\d{2}:\d{2})/)[1];
+          const timeOUT = match.match(/OUT: (\d{2}:\d{2}:\d{2}:\d{2})/)[1];
+          const dialogue = match.split("\n").slice(2, -2).join("\n").trim();
+          return `TAKE ${timeIN}\n${dialogue}\n${timeOUT}\n`;
+        });
+
+        return simplifiedText;
       }
 
       function downloadFile(text, originalFileName) {
