@@ -68,7 +68,6 @@
           alert("Por favor, selecciona un archivo.");
         }
       }
-
       function simplifyText(inputText) {
         const regex =
           /TAKES SCRIPT\s+Ref:\s+[\s\S]*?={50,}\s+Title:\s+Project:\s+[\s\S]+?={50,}/g;
@@ -82,9 +81,17 @@
           const takeNumber = match.match(/TAKE (\d+)/)[1];
           const timeIN = match.match(/IN: (\d{2}:\d{2}:\d{2}:\d{2})/)[1];
           const timeOUT = match.match(/OUT: (\d{2}:\d{2}:\d{2}:\d{2})/)[1];
-          const dialogue = match.split("\n").slice(2, -2).join("\n").trim();
+          const dialogue = match
+            .split("\n")
+            .slice(2, -2)
+            .join("\n")
+            .trim()
+            .replace(/([^:]+):\s*\n\s*/g, "$1: ");
           return `TAKE ${takeNumber}\n${timeIN}\n${dialogue}\n${timeOUT}\n`;
         });
+
+        // Eliminar saltos de línea adicionales entre diálogos
+        simplifiedText = simplifiedText.replace(/\n\s*\n/g, "\n");
 
         return simplifiedText;
       }
