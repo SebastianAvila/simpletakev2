@@ -68,6 +68,7 @@
           alert("Por favor, selecciona un archivo.");
         }
       }
+
       function simplifyText(inputText) {
         const regex =
           /TAKES SCRIPT\s+Ref:\s+[\s\S]*?={50,}\s+Title:\s+Project:\s+[\s\S]+?={50,}/g;
@@ -78,10 +79,11 @@
           /TAKE \d+\s+[\s\S]+?IN: (\d{2}:\d{2}:\d{2}:\d{2})\s+DURATION: (\d{2}:\d{2}:\d{2}:\d{2})\s+[\s\S]+?OUT: (\d{2}:\d{2}:\d{2}:\d{2})\s+[-]+/g;
 
         simplifiedText = simplifiedText.replace(blockRegex, (match) => {
+          const takeNumber = match.match(/TAKE (\d+)/)[1];
           const timeIN = match.match(/IN: (\d{2}:\d{2}:\d{2}:\d{2})/)[1];
           const timeOUT = match.match(/OUT: (\d{2}:\d{2}:\d{2}:\d{2})/)[1];
           const dialogue = match.split("\n").slice(2, -2).join("\n").trim();
-          return `TAKE ${timeIN}\n${dialogue}\n${timeOUT}\n`;
+          return `TAKE ${takeNumber}\n${timeIN}\n${dialogue}\n${timeOUT}\n`;
         });
 
         return simplifiedText;
